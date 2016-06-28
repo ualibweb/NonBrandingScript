@@ -383,6 +383,7 @@ var oneSearchLoading = function() {
       //whenLoaded('apVideo', moveAPCarousel);
       whenLoaded('jQuery', addTextCallNumberLinks);
       whenLoaded('jQuery', afterAJAXComplete);
+      whenLoaded('jQuery', hideSavePDFToCloud)
     }  
     
     //Add Scout feedback link
@@ -500,6 +501,39 @@ jQuery( document ).ajaxComplete(function( event, xhr, settings ) {
   
   
 });
+}
+
+ //Save PDF to Cloud removed for eBook results
+function hideSavePDFToCloud(){
+
+
+//Iterate through each Scout result
+$('.display-info').each(function(){
+
+    var removePDFToCloud = false;
+
+    //Select database text in specific result to check if it's an EBSCO eBook.  This selector is relative to the display-info markup. 
+    $(this).find('.book-jacket ~ span').each(function(){
+
+       if (this.innerHTML == ', Database: eBook Collection (EBSCOhost)'){
+          removePDFToCloud = true;
+          return false; //equivalent to break -- which jQuery doesn't support
+        }
+    });
+
+    if (removePDFToCloud == true){
+        //console.log("REMOVE IS TRUE");
+
+        //Change this URL to suit your needs
+         $(this).find('.externalLinks a[href^="http://www.lib.ua.edu/externalWidgets/eds/savePDFtocloud"]').each(function(){
+                //console.log('found!')
+                $(this).css('display', 'none');
+         });
+    }
+
+
+});
+
 }
 
 
