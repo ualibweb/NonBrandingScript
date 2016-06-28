@@ -63,11 +63,21 @@ function addTextCallNumberLinks(){
 
 function disciplinesHide(speed){
 
-    speed = speed || false;
+    speed = speed || 10;
     console.log("DISCIPLINES HIDE");
-    jQuery('#disciplines').fadeOut(speed);
+    
+    hideDisciplinesLink  = document.querySelector("#hideDisciplines"); 
+    
+    if (!hideDisciplinesLink){
+      createHideDisciplinesLink();
+    }
+    
+    jQuery('#disciplines').hide();
     jQuery('#hideDisciplines').html('&#x25BC;  Show topics');
     jQuery('#hideDisciplines').one('click', disciplinesShow);
+    
+    
+    
 }
 
 function disciplinesShow(){
@@ -75,23 +85,34 @@ function disciplinesShow(){
     jQuery('#disciplines').fadeIn(100);
     jQuery('#hideDisciplines').html('&#x25B2; Hide topics');
     jQuery('#hideDisciplines').one('click', disciplinesHide);
+}
+
+function createHideDisciplinesLink(){
+  
+  console.log("CREATE LINK FIRES");
+  
+  disciplines = document.querySelector("#ctl00_ctl00_MainContentArea_MainContentArea_ctrlLimiters_divDisciplines");
+  
+  if (!disciplines){
+    disciplines = document.querySelector("#ctrlLimiters_divDisciplines");
   }
-
-function disciplinesToggle(){
-
-  disciplines = document.querySelectorAll("#ctl00_ctl00_MainContentArea_MainContentArea_ctrlLimiters_divDisciplines")[0];
+  
   hideDisciplines = document.createElement("a");
   hideDisciplines.setAttribute("href", "#");
   hideDisciplines.setAttribute("id", "hideDisciplines");
   hideDisciplines.innerHTML = 'Toggle disciplines';
   disciplines.insertBefore(hideDisciplines, disciplines.firstChild)
+}
 
-  console.log("READY AGAIN!");
-  disciplinesHide(1);
+function disciplinesAttachHandler(){
+
+  
 
   jQuery('a[title="Search Options"]').one('click', function(el){
     jQuery('#disciplines').hide();
   });
+  
+  disciplinesHide(1);
 }
 
 var oneSearchLoading = function() {
@@ -292,7 +313,7 @@ var oneSearchLoading = function() {
     found = location.pathname.match(re);
 
     if (found){
-      whenLoaded('jQuery', disciplinesToggle);
+      whenLoaded('jQuery', disciplinesAttachHandler);
     }
 
     facetCookie = getCookie('onesearchfacets');
@@ -361,7 +382,7 @@ var oneSearchLoading = function() {
     if (found){
       //whenLoaded('apVideo', moveAPCarousel);
       whenLoaded('jQuery', addTextCallNumberLinks);
-      whenLoaded('jQuery', updateLanguageModal);
+      whenLoaded('jQuery', afterAJAXComplete);
     }  
     
     //Add Scout feedback link
@@ -455,20 +476,31 @@ var oneSearchLoading = function() {
     }
 
 
-function updateLanguageModal(){
+//Customizations that occur after AJAX is complete
+function afterAJAXComplete(){
 jQuery( document ).ajaxComplete(function( event, xhr, settings ) {
   
   var languageURLSegment = 'panelId=multiSelectCluster_Language'; 
   var URL = settings.url;
   
   searchResult = URL.search(languageURLSegment);
-  if (searchResult == -1){
-    return;
-  }
-  else {
+  if (searchResult != -1){   
     //console.log("searchResult is not equal to -1");
     undeterminedLink = document.querySelectorAll('label[for="modal__cluster_Language%24undetermined"] a')[0];
     undeterminedLink.innerHTML = 'english or other';
   }
+  
+  var searchOptionSegment = 'searchoptions?';
+  
+  searchResult = URL.search(searchOptionSegment);
+  
+  if (searchResult != -1){   
+    disciplinesHide(1);
+  }
+  
+  
 });
 }
+
+
+
