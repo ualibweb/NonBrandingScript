@@ -1,4 +1,4 @@
-console.log("dev06-29-0848");
+console.log("dev09-22-0836");
 console.log("non-branding script dev!");
 
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -371,8 +371,16 @@ var oneSearchLoading = function() {
     if (found){
       //whenLoaded('apVideo', moveAPCarousel);
       whenLoaded('jQuery', addTextCallNumberLinks);
-      whenLoaded('jQuery', afterAJAXComplete);
-    }  
+      whenLoaded('jQuery', resultsAfterAjaxComplete);
+    }
+
+    re = /\/detail\/detail/;  
+
+    //search current path for pattern
+    found = location.pathname.match(re);
+    if (found){
+      whenLoaded('jQuery', mlaNotYetUpdated);
+    }
     
     //Add Scout feedback link
 
@@ -382,7 +390,7 @@ var oneSearchLoading = function() {
     feedback.setAttribute("class", "find-field-link");
 
     feedbackLink = document.createElement("a");
-    feedbackLink.setAttribute("href", "https://www.lib.ua.edu/forms/report-a-scout-issue/");
+    feedbackLink.setAttribute("href", "https://www.lib.ua.edu/library-help/kacecontact-form/");
     feedbackLink.setAttribute("target", "_blank");
     feedbackLink.innerHTML = 'Report Scout issue';
 
@@ -465,13 +473,13 @@ var oneSearchLoading = function() {
     }
 
 
-//Customizations that occur after AJAX is complete
-function afterAJAXComplete(){
+//Customizations that occur after AJAX is complete -on the results page-
+function resultsAfterAjaxComplete(){
 jQuery( document ).ajaxComplete(function( event, xhr, settings ) {
   
   var languageURLSegment = 'panelId=multiSelectCluster_Language'; 
   var URL = settings.url;
-  
+
   searchResult = URL.search(languageURLSegment);
   if (searchResult != -1){   
     //console.log("searchResult is not equal to -1");
@@ -479,6 +487,8 @@ jQuery( document ).ajaxComplete(function( event, xhr, settings ) {
     undeterminedLink.innerHTML = 'english or other';
   }
   
+  //Hide disciplines if search options menu is being loaded
+  //Search options are accessible by "Show more" under publication date in the results list of Scout
   var searchOptionSegment = 'searchoptions?';
   
   searchResult = URL.search(searchOptionSegment);
@@ -486,9 +496,49 @@ jQuery( document ).ajaxComplete(function( event, xhr, settings ) {
   if (searchResult != -1){   
     disciplinesHide(1);
   }
-  
-  
+
 });
+}
+
+function mlaNotYetUpdated(){
+  
+  console.log("mlaNotYetUpdated called");
+  
+  jQuery( document ).ajaxComplete(function( event, xhr, settings ) {
+  
+    var languageURLSegment = 'citepanel'; 
+    var URL = settings.url;
+    searchResult = URL.search(languageURLSegment);
+    
+    if (searchResult != -1){
+      var MLAFound = false; 
+      
+      $('dl.cite-list').children().each(function(){
+         if (MLAFound == true){
+             console.log("MLA FOUND IS TRUE!");
+             $(this).children('.cite-header').each(function(){
+                 //console.log("CITE-HEADER EACH");
+                 $(this).html('<p><strong>This citation is an old version of MLA (7th edition)</strong>.</p>');
+             });
+             $(this).children('.cite-indent').each(function(){
+                 //console.log("CITE-INDENT EACH");
+                 oldCitation = $(this).html();
+                 $(this).html('<p class="body-paragraph">You will want to <a href="https://owl.english.purdue.edu/owl/resource/747/01/" target="_blank">cite 8th edition (opens in new tab)</a> for your classes. The MLA 7th edition citation is included for reference below: ' + oldCitation + '</p>');
+             }); 
+             return false;
+         }
+         
+         $(this).children('a').each(function(){
+
+             if ($(this).attr('title')=='MLA'){
+                 //console.log("SETTING MLA FOUND TO TRUE!");
+                 MLAFound = true;
+             }
+         });
+        });
+    
+    }
+  });
 }
 
  //Save PDF to Cloud removed for eBook results
@@ -496,7 +546,7 @@ function hideSavePDFToCloud(){
 
 
 
-$(document).ready(function(){
+$(window).load(function(){
 
   console.log("HIDE SAVE PDF!");
 

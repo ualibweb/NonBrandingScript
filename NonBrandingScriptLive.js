@@ -1,4 +1,4 @@
-console.log("dev0520-1001");
+console.log("live06-29-09-25");
 console.log("non-branding script live!");
 
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -63,11 +63,21 @@ function addTextCallNumberLinks(){
 
 function disciplinesHide(speed){
 
-    speed = speed || false;
+    speed = speed || 10;
     console.log("DISCIPLINES HIDE");
-    jQuery('#disciplines').fadeOut(speed);
+    
+    hideDisciplinesLink  = document.querySelector("#hideDisciplines"); 
+    
+    if (!hideDisciplinesLink){
+      createHideDisciplinesLink();
+    }
+    
+    jQuery('#disciplines').hide();
     jQuery('#hideDisciplines').html('&#x25BC;  Show topics');
     jQuery('#hideDisciplines').one('click', disciplinesShow);
+    
+    
+    
 }
 
 function disciplinesShow(){
@@ -75,24 +85,24 @@ function disciplinesShow(){
     jQuery('#disciplines').fadeIn(100);
     jQuery('#hideDisciplines').html('&#x25B2; Hide topics');
     jQuery('#hideDisciplines').one('click', disciplinesHide);
+}
+
+function createHideDisciplinesLink(){
+  
+  console.log("CREATE LINK FIRES");
+  
+  disciplines = document.querySelector("#ctl00_ctl00_MainContentArea_MainContentArea_ctrlLimiters_divDisciplines");
+  
+  if (!disciplines){
+    disciplines = document.querySelector("#ctrlLimiters_divDisciplines");
   }
-
-function disciplinesToggle(){
-
-  disciplines = document.querySelectorAll("#ctl00_ctl00_MainContentArea_MainContentArea_ctrlLimiters_divDisciplines")[0];
+  
   hideDisciplines = document.createElement("a");
   hideDisciplines.setAttribute("href", "#");
   hideDisciplines.setAttribute("id", "hideDisciplines");
-  hideDisciplines.innerHTML = 'Toggle disciplines';
   disciplines.insertBefore(hideDisciplines, disciplines.firstChild)
-
-  console.log("READY AGAIN!");
-  disciplinesHide(1);
-
-  jQuery('a[title="Search Options"]').one('click', function(el){
-    jQuery('#disciplines').hide();
-  });
 }
+
 
 var oneSearchLoading = function() {
         var self = this;
@@ -292,7 +302,7 @@ var oneSearchLoading = function() {
     found = location.pathname.match(re);
 
     if (found){
-      whenLoaded('jQuery', disciplinesToggle);
+      whenLoaded('jQuery', disciplinesHide);
     }
 
     facetCookie = getCookie('onesearchfacets');
@@ -361,7 +371,7 @@ var oneSearchLoading = function() {
     if (found){
       //whenLoaded('apVideo', moveAPCarousel);
       whenLoaded('jQuery', addTextCallNumberLinks);
-      whenLoaded('jQuery', updateLanguageModal);
+      whenLoaded('jQuery', afterAJAXComplete);
     }  
     
     //Add Scout feedback link
@@ -372,7 +382,7 @@ var oneSearchLoading = function() {
     feedback.setAttribute("class", "find-field-link");
 
     feedbackLink = document.createElement("a");
-    feedbackLink.setAttribute("href", "https://www.lib.ua.edu/forms/report-a-scout-issue/");
+    feedbackLink.setAttribute("href", "https://www.lib.ua.edu/library-help/kacecontact-form/");
     feedbackLink.setAttribute("target", "_blank");
     feedbackLink.innerHTML = 'Report Scout issue';
 
@@ -455,20 +465,72 @@ var oneSearchLoading = function() {
     }
 
 
-function updateLanguageModal(){
+//Customizations that occur after AJAX is complete
+function afterAJAXComplete(){
 jQuery( document ).ajaxComplete(function( event, xhr, settings ) {
   
   var languageURLSegment = 'panelId=multiSelectCluster_Language'; 
   var URL = settings.url;
   
   searchResult = URL.search(languageURLSegment);
-  if (searchResult == -1){
-    return;
-  }
-  else {
+  if (searchResult != -1){   
     //console.log("searchResult is not equal to -1");
     undeterminedLink = document.querySelectorAll('label[for="modal__cluster_Language%24undetermined"] a')[0];
     undeterminedLink.innerHTML = 'english or other';
   }
+  
+  var searchOptionSegment = 'searchoptions?';
+  
+  searchResult = URL.search(searchOptionSegment);
+  
+  if (searchResult != -1){   
+    disciplinesHide(1);
+  }
+  
+  
 });
 }
+
+ //Save PDF to Cloud removed for eBook results
+function hideSavePDFToCloud(){
+
+
+
+$(window).load(function(){
+
+  console.log("WINDOW LOAD SAVE PDF!");
+
+  //Iterate through each Scout result
+  $('.display-info').each(function(){
+
+      var removePDFToCloud = false;
+
+      console.log("DISPLAY INFO!");  
+
+      //Select database text in specific result to check if it's an EBSCO eBook.  This selector is relative to the display-info markup.  
+      $(this).find('.record-icon ~ span').each(function(){
+          console.log("BOOK JACKET!");               
+         if (this.innerHTML == ', Database: eBook Collection (EBSCOhost)'){
+            removePDFToCloud = true;
+            return false; //equivalent to break -- which jQuery doesn't support
+          }
+      });
+
+      if (removePDFToCloud == true){
+          console.log("REMOVE IS TRUE");
+
+          //Change this URL to suit your needs
+           $(this).find('.externalLinks a[href^="http://www.lib.ua.edu/externalWidgets/eds/savePDFtocloud"]').each(function(){
+                  console.log('found!')
+                  $(this).css('display', 'none');
+           });
+      }
+    
+  });
+});
+
+
+}
+
+
+
