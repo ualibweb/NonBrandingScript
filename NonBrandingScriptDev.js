@@ -1,4 +1,4 @@
-console.log("dev0524-1145");
+console.log("dev06-29-0848");
 console.log("non-branding script dev!");
 
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -100,20 +100,9 @@ function createHideDisciplinesLink(){
   hideDisciplines = document.createElement("a");
   hideDisciplines.setAttribute("href", "#");
   hideDisciplines.setAttribute("id", "hideDisciplines");
-  hideDisciplines.innerHTML = 'Toggle disciplines';
   disciplines.insertBefore(hideDisciplines, disciplines.firstChild)
 }
 
-function disciplinesAttachHandler(){
-
-  
-
-  jQuery('a[title="Search Options"]').one('click', function(el){
-    jQuery('#disciplines').hide();
-  });
-  
-  disciplinesHide(1);
-}
 
 var oneSearchLoading = function() {
         var self = this;
@@ -313,7 +302,7 @@ var oneSearchLoading = function() {
     found = location.pathname.match(re);
 
     if (found){
-      whenLoaded('jQuery', disciplinesAttachHandler);
+      whenLoaded('jQuery', disciplinesHide);
     }
 
     facetCookie = getCookie('onesearchfacets');
@@ -383,7 +372,6 @@ var oneSearchLoading = function() {
       //whenLoaded('apVideo', moveAPCarousel);
       whenLoaded('jQuery', addTextCallNumberLinks);
       whenLoaded('jQuery', afterAJAXComplete);
-      whenLoaded('jQuery', hideSavePDFToCloud)
     }  
     
     //Add Scout feedback link
@@ -507,32 +495,40 @@ jQuery( document ).ajaxComplete(function( event, xhr, settings ) {
 function hideSavePDFToCloud(){
 
 
-//Iterate through each Scout result
-$('.display-info').each(function(){
 
-    var removePDFToCloud = false;
+$(document).ready(function(){
 
-    //Select database text in specific result to check if it's an EBSCO eBook.  This selector is relative to the display-info markup. 
-    $(this).find('.book-jacket ~ span').each(function(){
+  console.log("HIDE SAVE PDF!");
 
-       if (this.innerHTML == ', Database: eBook Collection (EBSCOhost)'){
-          removePDFToCloud = true;
-          return false; //equivalent to break -- which jQuery doesn't support
-        }
-    });
+  //Iterate through each Scout result
+  $('.display-info').each(function(){
 
-    if (removePDFToCloud == true){
-        //console.log("REMOVE IS TRUE");
+      var removePDFToCloud = false;
 
-        //Change this URL to suit your needs
-         $(this).find('.externalLinks a[href^="http://www.lib.ua.edu/externalWidgets/eds/savePDFtocloud"]').each(function(){
-                //console.log('found!')
-                $(this).css('display', 'none');
-         });
-    }
+      console.log("DISPLAY INFO!");  
 
+      //Select database text in specific result to check if it's an EBSCO eBook.  This selector is relative to the display-info markup.  
+      $(this).find('.record-icon ~ span').each(function(){
+          console.log("BOOK JACKET!");               
+         if (this.innerHTML == ', Database: eBook Collection (EBSCOhost)'){
+            removePDFToCloud = true;
+            return false; //equivalent to break -- which jQuery doesn't support
+          }
+      });
 
+      if (removePDFToCloud == true){
+          //console.log("REMOVE IS TRUE");
+
+          //Change this URL to suit your needs
+           $(this).find('.externalLinks a[href^="http://www.lib.ua.edu/externalWidgets/eds/savePDFtocloud"]').each(function(){
+                  //console.log('found!')
+                  $(this).css('display', 'none');
+           });
+      }
+    
+  });
 });
+
 
 }
 
