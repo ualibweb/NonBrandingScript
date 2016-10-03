@@ -1,5 +1,5 @@
-console.log("live09-22-0847");
-console.log("non-branding script dev!");
+console.log("live-10-03-1455");
+console.log("non-branding script live!");
 
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -403,6 +403,21 @@ var oneSearchLoading = function() {
     if (typeof(language) != 'undefined'){
       language.innerHTML = 'english or other'; 
     }
+    
+    language = document.querySelectorAll('.selected-limiters a[title^="Language (ZL)"]')[0];
+    if (typeof(language) != 'undefined'){
+      if (language.innerHTML == 'undetermined'){
+          language.innerHTML = 'english or other';
+      }
+    }
+    
+    [].forEach.call(document.querySelectorAll('#citationFields strong'), function(item){
+      if (item.innerHTML == 'Undetermined'){
+        item.innerHTML = 'English or other';
+      }
+    });
+
+    
     /*This section handles the detailed record users see when they drill down*/
     //Usually, the language field is the 4th child 
     languageDetailed = document.querySelectorAll('#citationFields dd:nth-child(5)')[0]; 
