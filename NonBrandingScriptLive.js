@@ -1,4 +1,4 @@
-console.log("live-10-03-1455");
+console.log("live-10-22-1955");
 console.log("non-branding script live!");
 
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -381,6 +381,22 @@ var oneSearchLoading = function() {
     if (found){
       whenLoaded('jQuery', mlaNotYetUpdated);
     }
+	
+	re = /\/search\/basic/;  
+
+	//search current path for pattern
+	found = location.pathname.match(re);
+	if (found){
+	  whenLoaded('jQuery', addAlertMessage);	
+	}
+
+	re = /\/search\/advanced/; 
+
+	//search current path for pattern
+	found = location.pathname.match(re);
+	if (found){
+	  whenLoaded('jQuery', addAlertMessage);	
+	}
     
     //Add Scout feedback link
 
@@ -513,6 +529,14 @@ jQuery( document ).ajaxComplete(function( event, xhr, settings ) {
   }
 
 });
+}
+
+function addAlertMessage(){
+	jQuery( document ).ready(function(){
+		
+		var newHTML  = '<div class="alert" style="margin-top: 10px;  margin-bottom: 10px; max-width: 510px; padding: 15px; border-radius: 4px; color: #a94442; background-color: #f2dede;">Scout is experiencing occasional issues with access from off campus. Before searching off campus, log in via the yellow bar on the top of the screen to help keep this issue from occurring. (No action is needed on campus.)</div>'; 
+		jQuery('#findFieldOuter').prepend(newHTML);
+	});
 }
 
 function mlaNotYetUpdated(){
