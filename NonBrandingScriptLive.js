@@ -372,6 +372,7 @@ var oneSearchLoading = function() {
       //whenLoaded('apVideo', moveAPCarousel);
       whenLoaded('jQuery', addTextCallNumberLinks);
       whenLoaded('jQuery', resultsAfterAjaxComplete);
+	    //whenLoaded('jQuery', addAlertMessageResults);
     }
 
     re = /\/detail\/detail/;  
@@ -382,21 +383,7 @@ var oneSearchLoading = function() {
       whenLoaded('jQuery', mlaNotYetUpdated);
     }
 	
-	re = /\/search\/basic/;  
 
-	//search current path for pattern
-	found = location.pathname.match(re);
-	if (found){
-	  whenLoaded('jQuery', addAlertMessage);	
-	}
-
-	re = /\/search\/advanced/; 
-
-	//search current path for pattern
-	found = location.pathname.match(re);
-	if (found){
-	  whenLoaded('jQuery', addAlertMessage);	
-	}
     
     //Add Scout feedback link
 
@@ -413,6 +400,9 @@ var oneSearchLoading = function() {
     feedback.appendChild(feedbackLink);
 
     findFieldLinks.appendChild(feedback);
+    
+    //Add new search link when limiters need cleared
+    addNewSearchLink();
 
     /*Update language facet information*/
     language = document.querySelectorAll('label[for="_cluster_Language%24undetermined"] a')[0]; 
@@ -534,8 +524,16 @@ jQuery( document ).ajaxComplete(function( event, xhr, settings ) {
 function addAlertMessage(){
 	jQuery( document ).ready(function(){
 		
-		var newHTML  = '<div class="alert" style="margin-top: 10px;  margin-bottom: 10px; max-width: 510px; padding: 15px; border-radius: 4px; color: #a94442; background-color: #f2dede;">Scout is experiencing occasional issues with access from off campus. Before searching off campus, log in via the yellow bar on the top of the screen to help keep this issue from occurring. (No action is needed on campus.)</div>'; 
+		var newHTML  = '<div class="alert" style="margin-top: 10px;  margin-bottom: 10px; max-width: 510px; padding: 15px; border-radius: 4px; color: #a94442; background-color: #f2dede;">Scout is experiencing occasional issues with access from off campus. Before searching off campus, log in via the yellow bar on the top of the screen to help keep this issue from occurring  -- if you don\'t see it, you\'re already logged in. (No action is needed on campus.)</div>'; 
 		jQuery('#findFieldOuter').prepend(newHTML);
+	});
+}
+
+function addAlertMessageResults(){
+	jQuery( document ).ready(function(){
+		
+		var newHTML  = '<div class="alert" style="margin-bottom: 10px; padding: 15px; border-radius: 4px; color: #8a6d3b; background-color: #fcf8e3;">If you experience an issue with logging in from off campus, try <a href="http://ask.lib.ua.edu/a.php?qid=1334173">clearing your cookies</a> and starting your search over.  If the issue persists, please <a href="https://www.lib.ua.edu/library-help/kacecontact-form/">report the issue</a> and we will make sure to address it.'; 
+		jQuery('ul.result-list').prepend(newHTML);
 	});
 }
 
@@ -578,6 +576,20 @@ function mlaNotYetUpdated(){
     
     }
   });
+}
+
+function addNewSearchLink(){
+  var noResults = document.querySelector('#UserMessageLabel .std-warning-text');
+  if (noResults != undefined){
+      var newSearchHref = document.querySelector('a[title="New Search"]').getAttribute('href');
+
+      if (newSearchHref != undefined){
+          var newSearchLink = '<a href=' + newSearchHref + ' style="margin-left: 5px;">Start A New Search</a>';
+          var trimmedNoResults = noResults.outerHTML.replace('</span>', '');
+          //console.log(trimmedNoResults);
+          noResults.outerHTML = trimmedNoResults + newSearchLink + '</span>';
+      }
+  }    
 }
 
  //Save PDF to Cloud removed for eBook results

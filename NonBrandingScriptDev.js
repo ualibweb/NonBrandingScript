@@ -190,7 +190,7 @@ var oneSearchLoading = function() {
 
       (function checkService() {
         console.log("Waiting on " + service);
-        if (window[service] || (service == 'apVideo' && (apVideo = window.parent.document.querySelector('.apvideo')))) { 
+        if (window[service] || (service == 'checkoutModal' && (apVideo = document.querySelector('#CheckoutDownloadModal')))) { 
             clearTimeout(timeout);
             callback();
         } else {
@@ -413,6 +413,9 @@ var oneSearchLoading = function() {
     feedback.appendChild(feedbackLink);
 
     findFieldLinks.appendChild(feedback);
+    
+    //Add new search link when limiters need cleared
+    addNewSearchLink();
 
     /*Update language facet information*/
     language = document.querySelectorAll('label[for="_cluster_Language%24undetermined"] a')[0]; 
@@ -527,8 +530,28 @@ jQuery( document ).ajaxComplete(function( event, xhr, settings ) {
   if (searchResult != -1){   
     disciplinesHide(1);
   }
+  
+  console.log("beginning of new HTML");
+  var searchOptionSegment = '/CheckoutDialog/CheckBookAvailability';
+  
+  searchResult = URL.search(searchOptionSegment);
+  
+  if (searchResult != -1){  
+    console.log("searchResult found!"); 
+     whenLoaded('checkoutModal', downloadMessageEbook);
+    
+  }
 
 });
+}
+
+function downloadMessageEbook(){
+  console.log("downloadMessageEbook fires");
+  var lastParagraph = document.querySelector("#CheckoutDownloadModal .modal-content p:nth-child(3)");
+  lastParagraph.outerHTML = lastParagraph.outerHTML + '<p style="background: yellow; padding: 5px; border-radius:4px; background-color: #fcf8e3;">Checking out this eBook may keep another user from accessing it.  When you are done with the eBook, please make sure to return it in Adobe Digital Editions.</p>'
+  var headerText = document.querySelector("#CheckoutDownloadModal h2");
+  headerText.innerHTML = headerText.innerHTML.replace('Download', 'Checkout');
+    
 }
 
 function addAlertMessage(){
@@ -580,8 +603,22 @@ function mlaNotYetUpdated(){
   });
 }
 
+function addNewSearchLink(){
+  var noResults = document.querySelector('#UserMessageLabel .std-warning-text');
+  if (noResults != undefined){
+      var newSearchHref = document.querySelector('a[title="New Search"]').getAttribute('href');
+
+      if (newSearchHref != undefined){
+          var newSearchLink = '<a href=' + newSearchHref + ' style="margin-left: 5px;">Start A New Search</a>';
+          var trimmedNoResults = noResults.outerHTML.replace('</span>', '');
+          //console.log(trimmedNoResults);
+          noResults.outerHTML = trimmedNoResults + newSearchLink + '</span>';
+      }
+  }    
+}
+
  //Save PDF to Cloud removed for eBook results
-function hideSavePDFToCloud(){
+function EBSCOEBookCustomizations(){
 
 
 
@@ -606,13 +643,18 @@ $(window).load(function(){
       });
 
       if (removePDFToCloud == true){
-          //console.log("REMOVE IS TRUE");
 
-          //Change this URL to suit your needs
+          //Hide "Save PDF to Cloud"
            $(this).find('.externalLinks a[href^="http://www.lib.ua.edu/externalWidgets/eds/savePDFtocloud"]').each(function(){
                   //console.log('found!')
                   $(this).css('display', 'none');
            });
+           
+            $(this).find('a[title="Download (Offline)"').each(function(){
+                  var innerHTML = $(this).html();
+                  $(this).html('Checkout (Offline)');
+
+            });
       }
     
   });
