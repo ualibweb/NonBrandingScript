@@ -1,4 +1,3 @@
-console.log("live-10-22-1955");
 console.log("non-branding script live!");
 
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -190,7 +189,7 @@ var oneSearchLoading = function() {
 
       (function checkService() {
         console.log("Waiting on " + service);
-        if (window[service] || (service == 'apVideo' && (apVideo = window.parent.document.querySelector('.apvideo')))) { 
+        if (window[service] || (service == 'checkoutModal' && (apVideo = document.querySelector('#CheckoutDownloadModal')))) { 
             clearTimeout(timeout);
             callback();
         } else {
@@ -372,7 +371,6 @@ var oneSearchLoading = function() {
       //whenLoaded('apVideo', moveAPCarousel);
       whenLoaded('jQuery', addTextCallNumberLinks);
       whenLoaded('jQuery', resultsAfterAjaxComplete);
-	    //whenLoaded('jQuery', addAlertMessageResults);
     }
 
     re = /\/detail\/detail/;  
@@ -383,73 +381,10 @@ var oneSearchLoading = function() {
       whenLoaded('jQuery', mlaNotYetUpdated);
     }
 	
-
-    
-    //Add Scout feedback link
-
-    findFieldLinks = document.querySelectorAll("#findFieldLinks")[0];
-
-    feedback = document.createElement("li");
-    feedback.setAttribute("class", "find-field-link");
-
-    feedbackLink = document.createElement("a");
-    feedbackLink.setAttribute("href", "https://www.lib.ua.edu/library-help/kacecontact-form/");
-    feedbackLink.setAttribute("target", "_blank");
-    feedbackLink.innerHTML = 'Report Scout issue';
-
-    feedback.appendChild(feedbackLink);
-
-    findFieldLinks.appendChild(feedback);
-    
-    //Add new search link when limiters need cleared
-    addNewSearchLink();
-
-    /*Update language facet information*/
-    language = document.querySelectorAll('label[for="_cluster_Language%24undetermined"] a')[0]; 
-    if (typeof(language) != 'undefined'){
-      language.innerHTML = 'english or other'; 
-    }
-    
-    language = document.querySelectorAll('.selected-limiters a[title^="Language (ZL)"]')[0];
-    if (typeof(language) != 'undefined'){
-      if (language.innerHTML == 'undetermined'){
-          language.innerHTML = 'english or other';
-      }
-    }
-    
-    [].forEach.call(document.querySelectorAll('#citationFields strong'), function(item){
-      if (item.innerHTML == 'Undetermined'){
-        item.innerHTML = 'English or other';
-      }
-    });
-
-    
-    /*This section handles the detailed record users see when they drill down*/
-    //Usually, the language field is the 4th child 
-    languageDetailed = document.querySelectorAll('#citationFields dd:nth-child(5)')[0]; 
-    if (typeof(languageDetailed) != 'undefined'){
-      if (languageDetailed.innerHTML == 'Undetermined' || languageDetailed.innerHTML == '<strong>Undetermined</strong>'){
-        languageDetailed.innerHTML = 'English or other'; 
-      }
-    }
-
-    //Sometimes also appears as nth child 5
-    languageDetailed = document.querySelectorAll('#citationFields dd:nth-child(4)')[0]; 
-    if (typeof(languageDetailed) != 'undefined'){
-      if (languageDetailed.innerHTML == 'Undetermined' || languageDetailed.innerHTML == '<strong>Undetermined</strong>'){
-        languageDetailed.innerHTML = 'English or other'; 
-      }
-    }
-
-    //Edit descriptions that appear in search results
-    recordDescriptions = document.querySelectorAll('.display-info');
-    Array.prototype.forEach.call(recordDescriptions, function(el){
-
-    el.innerHTML = el.innerHTML.replace("Language: Undetermined", "Language: English or other");
-
-    el.innerHTML = el.innerHTML.replace("Language: <strong>Undetermined</strong>", "Language: <strong>English or other</strong>");
-
-    });  
+    whenLoaded('jQuery', addNewSearchLink);
+    whenLoaded('jQuery', addFeedbackLink);
+    whenLoaded('jQuery', updateLanguageMetadata)
+   
     
 
     function moveAPCarousel(){
@@ -517,23 +452,37 @@ jQuery( document ).ajaxComplete(function( event, xhr, settings ) {
   if (searchResult != -1){   
     disciplinesHide(1);
   }
+  
+  console.log("beginning of new HTML");
+  var searchOptionSegment = '/CheckoutDialog/CheckBookAvailability';
+  
+  searchResult = URL.search(searchOptionSegment);
+  
+  if (searchResult != -1){  
+    console.log("searchResult found!"); 
+     whenLoaded('checkoutModal', downloadMessageEbook);
+    
+  }
 
 });
+}
+
+
+
+function downloadMessageEbook(){
+  console.log("downloadMessageEbook fires");
+  var lastParagraph = document.querySelector("#CheckoutDownloadModal .modal-content p:nth-child(3)");
+  lastParagraph.outerHTML = lastParagraph.outerHTML + '<p style="background: yellow; padding: 5px; border-radius:4px; background-color: #fcf8e3;">Checking out this eBook may keep another user from accessing it.  When you are done with the eBook, please make sure to return it in Adobe Digital Editions.</p>'
+  var headerText = document.querySelector("#CheckoutDownloadModal h2");
+  headerText.innerHTML = headerText.innerHTML.replace('Download', 'Checkout');
+    
 }
 
 function addAlertMessage(){
 	jQuery( document ).ready(function(){
 		
-		var newHTML  = '<div class="alert" style="margin-top: 10px;  margin-bottom: 10px; max-width: 510px; padding: 15px; border-radius: 4px; color: #a94442; background-color: #f2dede;">Scout is experiencing occasional issues with access from off campus. Before searching off campus, log in via the yellow bar on the top of the screen to help keep this issue from occurring  -- if you don\'t see it, you\'re already logged in. (No action is needed on campus.)</div>'; 
+		var newHTML  = '<div class="alert" style="margin-top: 10px;  margin-bottom: 10px; max-width: 510px; padding: 15px; border-radius: 4px; color: #a94442; background-color: #f2dede;">Scout is experiencing occasional issues with access from off campus. Before searching off campus, log in via the yellow bar on the top of the screen to help keep this issue from occurring. (No action is needed on campus.)</div>'; 
 		jQuery('#findFieldOuter').prepend(newHTML);
-	});
-}
-
-function addAlertMessageResults(){
-	jQuery( document ).ready(function(){
-		
-		var newHTML  = '<div class="alert" style="margin-bottom: 10px; padding: 15px; border-radius: 4px; color: #8a6d3b; background-color: #fcf8e3;">If you experience an issue with logging in from off campus, try <a href="http://ask.lib.ua.edu/a.php?qid=1334173">clearing your cookies</a> and starting your search over.  If the issue persists, please <a href="https://www.lib.ua.edu/library-help/kacecontact-form/">report the issue</a> and we will make sure to address it.'; 
-		jQuery('ul.result-list').prepend(newHTML);
 	});
 }
 
@@ -579,21 +528,93 @@ function mlaNotYetUpdated(){
 }
 
 function addNewSearchLink(){
-  var noResults = document.querySelector('#UserMessageLabel .std-warning-text');
-  if (noResults != undefined){
-      var newSearchHref = document.querySelector('a[title="New Search"]').getAttribute('href');
+  jQuery(document).ready(function(){
+    var noResults = document.querySelector('#UserMessageLabel .std-warning-text');
+    if (noResults != undefined){
+        var newSearchHref = document.querySelector('a[title="New Search"]').getAttribute('href');
 
-      if (newSearchHref != undefined){
-          var newSearchLink = '<a href=' + newSearchHref + ' style="margin-left: 5px;">Start A New Search</a>';
-          var trimmedNoResults = noResults.outerHTML.replace('</span>', '');
-          //console.log(trimmedNoResults);
-          noResults.outerHTML = trimmedNoResults + newSearchLink + '</span>';
-      }
-  }    
+        if (newSearchHref != undefined){
+            var newSearchLink = '<a href=' + newSearchHref + ' style="margin-left: 5px;">Start A New Search</a>';
+            var trimmedNoResults = noResults.outerHTML.replace('</span>', '');
+            //console.log(trimmedNoResults);
+            noResults.outerHTML = trimmedNoResults + newSearchLink + '</span>';
+        }
+    }
+  });
 }
 
+function addFeedbackLink(){
+  jQuery(document).ready(function(){
+    findFieldLinks = document.querySelectorAll("#findFieldLinks")[0];
+
+    feedback = document.createElement("li");
+    feedback.setAttribute("class", "find-field-link");
+
+    feedbackLink = document.createElement("a");
+    feedbackLink.setAttribute("href", "https://www.lib.ua.edu/library-help/kacecontact-form/");
+    feedbackLink.setAttribute("target", "_blank");
+    feedbackLink.innerHTML = 'Report Scout issue';
+
+    feedback.appendChild(feedbackLink);
+
+    findFieldLinks.appendChild(feedback);
+ });
+}
+  
+ function updateLanguageMetadata(){
+   jQuery(document).ready(function(){
+   
+       /*Update language facet information*/
+      language = document.querySelectorAll('label[for="_cluster_Language%24undetermined"] a')[0]; 
+      if (typeof(language) != 'undefined'){
+        language.innerHTML = 'english or other'; 
+      }
+      
+      language = document.querySelectorAll('.selected-limiters a[title^="Language (ZL)"]')[0];
+      if (typeof(language) != 'undefined'){
+        if (language.innerHTML == 'undetermined'){
+            language.innerHTML = 'english or other';
+        }
+      }
+      
+      [].forEach.call(document.querySelectorAll('#citationFields strong'), function(item){
+        if (item.innerHTML == 'Undetermined'){
+          item.innerHTML = 'English or other';
+        }
+      });
+
+      
+      /*This section handles the detailed record users see when they drill down*/
+      //Usually, the language field is the 4th child 
+      languageDetailed = document.querySelectorAll('#citationFields dd:nth-child(5)')[0]; 
+      if (typeof(languageDetailed) != 'undefined'){
+        if (languageDetailed.innerHTML == 'Undetermined' || languageDetailed.innerHTML == '<strong>Undetermined</strong>'){
+          languageDetailed.innerHTML = 'English or other'; 
+        }
+      }
+
+      //Sometimes also appears as nth child 5
+      languageDetailed = document.querySelectorAll('#citationFields dd:nth-child(4)')[0]; 
+      if (typeof(languageDetailed) != 'undefined'){
+        if (languageDetailed.innerHTML == 'Undetermined' || languageDetailed.innerHTML == '<strong>Undetermined</strong>'){
+          languageDetailed.innerHTML = 'English or other'; 
+        }
+      }
+
+      //Edit descriptions that appear in search results
+      recordDescriptions = document.querySelectorAll('.display-info');
+      Array.prototype.forEach.call(recordDescriptions, function(el){
+
+      el.innerHTML = el.innerHTML.replace("Language: Undetermined", "Language: English or other");
+
+      el.innerHTML = el.innerHTML.replace("Language: <strong>Undetermined</strong>", "Language: <strong>English or other</strong>");
+
+      });  
+   });
+ }
+
  //Save PDF to Cloud removed for eBook results
-function hideSavePDFToCloud(){
+function EBSCOEBookCustomizations(){
 
 
 
@@ -618,13 +639,18 @@ $(window).load(function(){
       });
 
       if (removePDFToCloud == true){
-          //console.log("REMOVE IS TRUE");
 
-          //Change this URL to suit your needs
+          //Hide "Save PDF to Cloud"
            $(this).find('.externalLinks a[href^="http://www.lib.ua.edu/externalWidgets/eds/savePDFtocloud"]').each(function(){
                   //console.log('found!')
                   $(this).css('display', 'none');
            });
+           
+            $(this).find('a[title="Download (Offline)"').each(function(){
+                  var innerHTML = $(this).html();
+                  $(this).html('Checkout (Offline)');
+
+            });
       }
     
   });

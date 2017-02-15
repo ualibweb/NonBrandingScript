@@ -382,87 +382,10 @@ var oneSearchLoading = function() {
       whenLoaded('jQuery', mlaNotYetUpdated);
     }
 	
-	re = /\/search\/basic/;  
-
-	//search current path for pattern
-	found = location.pathname.match(re);
-	if (found){
-	  whenLoaded('jQuery', addAlertMessage);	
-	}
-
-	re = /\/search\/advanced/; 
-
-	//search current path for pattern
-	found = location.pathname.match(re);
-	if (found){
-	  whenLoaded('jQuery', addAlertMessage);	
-	}
-    
-    //Add Scout feedback link
-
-    findFieldLinks = document.querySelectorAll("#findFieldLinks")[0];
-
-    feedback = document.createElement("li");
-    feedback.setAttribute("class", "find-field-link");
-
-    feedbackLink = document.createElement("a");
-    feedbackLink.setAttribute("href", "https://www.lib.ua.edu/library-help/kacecontact-form/");
-    feedbackLink.setAttribute("target", "_blank");
-    feedbackLink.innerHTML = 'Report Scout issue';
-
-    feedback.appendChild(feedbackLink);
-
-    findFieldLinks.appendChild(feedback);
-    
-    //Add new search link when limiters need cleared
-    addNewSearchLink();
-
-    /*Update language facet information*/
-    language = document.querySelectorAll('label[for="_cluster_Language%24undetermined"] a')[0]; 
-    if (typeof(language) != 'undefined'){
-      language.innerHTML = 'english or other'; 
-    }
-    
-    language = document.querySelectorAll('.selected-limiters a[title^="Language (ZL)"]')[0];
-    if (typeof(language) != 'undefined'){
-      if (language.innerHTML == 'undetermined'){
-          language.innerHTML = 'english or other';
-      }
-    }
-    
-    [].forEach.call(document.querySelectorAll('#citationFields strong'), function(item){
-      if (item.innerHTML == 'Undetermined'){
-        item.innerHTML = 'English or other';
-      }
-    });
-
-    
-    /*This section handles the detailed record users see when they drill down*/
-    //Usually, the language field is the 4th child 
-    languageDetailed = document.querySelectorAll('#citationFields dd:nth-child(5)')[0]; 
-    if (typeof(languageDetailed) != 'undefined'){
-      if (languageDetailed.innerHTML == 'Undetermined' || languageDetailed.innerHTML == '<strong>Undetermined</strong>'){
-        languageDetailed.innerHTML = 'English or other'; 
-      }
-    }
-
-    //Sometimes also appears as nth child 5
-    languageDetailed = document.querySelectorAll('#citationFields dd:nth-child(4)')[0]; 
-    if (typeof(languageDetailed) != 'undefined'){
-      if (languageDetailed.innerHTML == 'Undetermined' || languageDetailed.innerHTML == '<strong>Undetermined</strong>'){
-        languageDetailed.innerHTML = 'English or other'; 
-      }
-    }
-
-    //Edit descriptions that appear in search results
-    recordDescriptions = document.querySelectorAll('.display-info');
-    Array.prototype.forEach.call(recordDescriptions, function(el){
-
-    el.innerHTML = el.innerHTML.replace("Language: Undetermined", "Language: English or other");
-
-    el.innerHTML = el.innerHTML.replace("Language: <strong>Undetermined</strong>", "Language: <strong>English or other</strong>");
-
-    });  
+    whenLoaded('jQuery', addNewSearchLink);
+    whenLoaded('jQuery', addFeedbackLink);
+    whenLoaded('jQuery', updateLanguageMetadata)
+   
     
 
     function moveAPCarousel(){
@@ -545,6 +468,8 @@ jQuery( document ).ajaxComplete(function( event, xhr, settings ) {
 });
 }
 
+
+
 function downloadMessageEbook(){
   console.log("downloadMessageEbook fires");
   var lastParagraph = document.querySelector("#CheckoutDownloadModal .modal-content p:nth-child(3)");
@@ -604,18 +529,90 @@ function mlaNotYetUpdated(){
 }
 
 function addNewSearchLink(){
-  var noResults = document.querySelector('#UserMessageLabel .std-warning-text');
-  if (noResults != undefined){
-      var newSearchHref = document.querySelector('a[title="New Search"]').getAttribute('href');
+  jQuery(document).ready(function(){
+    var noResults = document.querySelector('#UserMessageLabel .std-warning-text');
+    if (noResults != undefined){
+        var newSearchHref = document.querySelector('a[title="New Search"]').getAttribute('href');
 
-      if (newSearchHref != undefined){
-          var newSearchLink = '<a href=' + newSearchHref + ' style="margin-left: 5px;">Start A New Search</a>';
-          var trimmedNoResults = noResults.outerHTML.replace('</span>', '');
-          //console.log(trimmedNoResults);
-          noResults.outerHTML = trimmedNoResults + newSearchLink + '</span>';
-      }
-  }    
+        if (newSearchHref != undefined){
+            var newSearchLink = '<a href=' + newSearchHref + ' style="margin-left: 5px;">Start A New Search</a>';
+            var trimmedNoResults = noResults.outerHTML.replace('</span>', '');
+            //console.log(trimmedNoResults);
+            noResults.outerHTML = trimmedNoResults + newSearchLink + '</span>';
+        }
+    }
+  });
 }
+
+function addFeedbackLink(){
+  jQuery(document).ready(function(){
+    findFieldLinks = document.querySelectorAll("#findFieldLinks")[0];
+
+    feedback = document.createElement("li");
+    feedback.setAttribute("class", "find-field-link");
+
+    feedbackLink = document.createElement("a");
+    feedbackLink.setAttribute("href", "https://www.lib.ua.edu/library-help/kacecontact-form/");
+    feedbackLink.setAttribute("target", "_blank");
+    feedbackLink.innerHTML = 'Report Scout issue';
+
+    feedback.appendChild(feedbackLink);
+
+    findFieldLinks.appendChild(feedback);
+ });
+}
+  
+ function updateLanguageMetadata(){
+   jQuery(document).ready(function(){
+   
+       /*Update language facet information*/
+      language = document.querySelectorAll('label[for="_cluster_Language%24undetermined"] a')[0]; 
+      if (typeof(language) != 'undefined'){
+        language.innerHTML = 'english or other'; 
+      }
+      
+      language = document.querySelectorAll('.selected-limiters a[title^="Language (ZL)"]')[0];
+      if (typeof(language) != 'undefined'){
+        if (language.innerHTML == 'undetermined'){
+            language.innerHTML = 'english or other';
+        }
+      }
+      
+      [].forEach.call(document.querySelectorAll('#citationFields strong'), function(item){
+        if (item.innerHTML == 'Undetermined'){
+          item.innerHTML = 'English or other';
+        }
+      });
+
+      
+      /*This section handles the detailed record users see when they drill down*/
+      //Usually, the language field is the 4th child 
+      languageDetailed = document.querySelectorAll('#citationFields dd:nth-child(5)')[0]; 
+      if (typeof(languageDetailed) != 'undefined'){
+        if (languageDetailed.innerHTML == 'Undetermined' || languageDetailed.innerHTML == '<strong>Undetermined</strong>'){
+          languageDetailed.innerHTML = 'English or other'; 
+        }
+      }
+
+      //Sometimes also appears as nth child 5
+      languageDetailed = document.querySelectorAll('#citationFields dd:nth-child(4)')[0]; 
+      if (typeof(languageDetailed) != 'undefined'){
+        if (languageDetailed.innerHTML == 'Undetermined' || languageDetailed.innerHTML == '<strong>Undetermined</strong>'){
+          languageDetailed.innerHTML = 'English or other'; 
+        }
+      }
+
+      //Edit descriptions that appear in search results
+      recordDescriptions = document.querySelectorAll('.display-info');
+      Array.prototype.forEach.call(recordDescriptions, function(el){
+
+      el.innerHTML = el.innerHTML.replace("Language: Undetermined", "Language: English or other");
+
+      el.innerHTML = el.innerHTML.replace("Language: <strong>Undetermined</strong>", "Language: <strong>English or other</strong>");
+
+      });  
+   });
+ }
 
  //Save PDF to Cloud removed for eBook results
 function EBSCOEBookCustomizations(){
