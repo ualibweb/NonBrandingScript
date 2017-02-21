@@ -547,18 +547,21 @@ function addNewSearchLink(){
 function addFeedbackLink(){
   jQuery(document).ready(function(){
     findFieldLinks = document.querySelectorAll("#findFieldLinks")[0];
+    
+    if (findFieldLinks != undefined){
 
-    feedback = document.createElement("li");
-    feedback.setAttribute("class", "find-field-link");
+      feedback = document.createElement("li");
+      feedback.setAttribute("class", "find-field-link");
 
-    feedbackLink = document.createElement("a");
-    feedbackLink.setAttribute("href", "https://www.lib.ua.edu/library-help/kacecontact-form/");
-    feedbackLink.setAttribute("target", "_blank");
-    feedbackLink.innerHTML = 'Report Scout issue';
+      feedbackLink = document.createElement("a");
+      feedbackLink.setAttribute("href", "https://www.lib.ua.edu/library-help/kacecontact-form/");
+      feedbackLink.setAttribute("target", "_blank");
+      feedbackLink.innerHTML = 'Report Scout issue';
 
-    feedback.appendChild(feedbackLink);
+      feedback.appendChild(feedbackLink);
 
-    findFieldLinks.appendChild(feedback);
+      findFieldLinks.appendChild(feedback);
+    }
  });
 }
   
