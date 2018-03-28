@@ -1,4 +1,4 @@
-console.log("non-branding script live!");
+console.log("non-branding script live 03312017!");
 
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -378,13 +378,13 @@ var oneSearchLoading = function() {
     //search current path for pattern
     found = location.pathname.match(re);
     if (found){
-      whenLoaded('jQuery', mlaNotYetUpdated);
+      //whenLoaded('jQuery', mlaNotYetUpdated);
     }
 	
-    whenLoaded('jQuery', addNewSearchLink);
+    //whenLoaded('jQuery', addNewSearchLink);
     whenLoaded('jQuery', addFeedbackLink);
-    whenLoaded('jQuery', updateLanguageMetadata)
-   
+    whenLoaded('jQuery', updateLanguageMetadata); 
+    //whenLoaded('jQuery', addAlertMessage);
     
 
     function moveAPCarousel(){
@@ -480,8 +480,9 @@ function downloadMessageEbook(){
 
 function addAlertMessage(){
 	jQuery( document ).ready(function(){
-		
-		var newHTML  = '<div class="alert" style="margin-top: 10px;  margin-bottom: 10px; max-width: 510px; padding: 15px; border-radius: 4px; color: #a94442; background-color: #f2dede;">Scout is experiencing occasional issues with access from off campus. Before searching off campus, log in via the yellow bar on the top of the screen to help keep this issue from occurring. (No action is needed on campus.)</div>'; 
+		//Warning colors #8a6d3b for text, #fcf83e for background
+    //Danger colors #a94442 for text, #f2dede for background
+		var newHTML  = '<div class="alert" style="margin-top: 10px;  margin-bottom: 10px; max-width: 510px; padding: 15px; border-radius: 4px; color: #a94442; background-color: #f2dede;">Links with the label "Check for Full Text" are currently running very slowly.  All other full text links are working normally.</div>'; 
 		jQuery('#findFieldOuter').prepend(newHTML);
 	});
 }
@@ -605,6 +606,7 @@ function addFeedbackLink(){
       }
 
       //Edit descriptions that appear in search results
+      /*
       recordDescriptions = document.querySelectorAll('.display-info');
       Array.prototype.forEach.call(recordDescriptions, function(el){
 
@@ -612,7 +614,7 @@ function addFeedbackLink(){
 
       el.innerHTML = el.innerHTML.replace("Language: <strong>Undetermined</strong>", "Language: <strong>English or other</strong>");
 
-      });  
+      });  */
    });
  }
 
@@ -634,18 +636,20 @@ $(window).load(function(){
 
       //Select database text in specific result to check if it's an EBSCO eBook.  This selector is relative to the display-info markup.  
       $(this).find('.record-icon ~ span').each(function(){
-          console.log("BOOK JACKET!");               
-         if (this.innerHTML == ', Database: eBook Collection (EBSCOhost)'){
-            removePDFToCloud = true;
-            return false; //equivalent to break -- which jQuery doesn't support
-          }
+          console.log("BOOK JACKET!");
+					var isEBSCOEBook = this.innerHTML.search('eBook Collection');					
+					if (isEBSCOEBook > 0){
+							removePDFToCloud = true;
+							console.log("EBSCO eBook Collection!");
+							return false; //equivalent to break -- which jQuery doesn't support
+					}
       });
 
       if (removePDFToCloud == true){
 
           //Hide "Save PDF to Cloud"
            $(this).find('.externalLinks a[href^="http://www.lib.ua.edu/externalWidgets/eds/savePDFtocloud"]').each(function(){
-                  //console.log('found!')
+                  console.log('hidden!')
                   $(this).css('display', 'none');
            });
            
