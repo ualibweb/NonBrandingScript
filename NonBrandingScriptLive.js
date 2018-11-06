@@ -385,6 +385,11 @@ var oneSearchLoading = function() {
     whenLoaded('jQuery', addFeedbackLink);
     whenLoaded('jQuery', updateLanguageMetadata); 
     //whenLoaded('jQuery', addAlertMessage);
+		whenLoaded('jQuery', restylePubFinder);
+		
+		function restylePubFinder(){
+			$('#findFieldOuter h2.searching span').attr('style', 'color: rgb(83,83,83) !important');
+		};
     
 
     function moveAPCarousel(){
@@ -482,8 +487,8 @@ function addAlertMessage(){
 	jQuery( document ).ready(function(){
 		//Warning colors #8a6d3b for text, #fcf83e for background
     //Danger colors #a94442 for text, #f2dede for background
-		var newHTML  = '<div class="alert" style="margin-top: 10px;  margin-bottom: 10px; max-width: 510px; padding: 15px; border-radius: 4px; color: #a94442; background-color: #f2dede;">Links with the label "Check for Full Text" are currently running very slowly.  All other full text links are working normally.</div>'; 
-		jQuery('#findFieldOuter').prepend(newHTML);
+		var newHTML  = '<div class="alert" style="margin-top: 10px;  margin-bottom: 10px; max-width: 600px; padding: 15px; border-radius: 4px; color: #8a6d3b; background-color: #fcf83e;">The password reset form for Scout accounts is experiencing occasional issues.  This issue is being addressed as a high priority.'; 
+		jQuery('#findFieldOuter fieldset').prepend(newHTML);
 	});
 }
 

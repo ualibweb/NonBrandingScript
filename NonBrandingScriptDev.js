@@ -1,4 +1,5 @@
-console.log("dev-10-22-1955");
+
+console.log("dev 033312017 4");
 console.log("non-branding script dev!");
 
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -379,12 +380,13 @@ var oneSearchLoading = function() {
     //search current path for pattern
     found = location.pathname.match(re);
     if (found){
-      whenLoaded('jQuery', mlaNotYetUpdated);
+      //whenLoaded('jQuery', mlaNotYetUpdated);
     }
 	
-    whenLoaded('jQuery', addNewSearchLink);
+    //whenLoaded('jQuery', addNewSearchLink);
     whenLoaded('jQuery', addFeedbackLink);
-    whenLoaded('jQuery', updateLanguageMetadata)
+    whenLoaded('jQuery', updateLanguageMetadata);
+    whenLoaded('jQuery', addAlertMessage);
    
     
 
@@ -454,7 +456,6 @@ jQuery( document ).ajaxComplete(function( event, xhr, settings ) {
     disciplinesHide(1);
   }
   
-  console.log("beginning of new HTML");
   var searchOptionSegment = '/CheckoutDialog/CheckBookAvailability';
   
   searchResult = URL.search(searchOptionSegment);
@@ -482,7 +483,7 @@ function downloadMessageEbook(){
 function addAlertMessage(){
 	jQuery( document ).ready(function(){
 		
-		var newHTML  = '<div class="alert" style="margin-top: 10px;  margin-bottom: 10px; max-width: 510px; padding: 15px; border-radius: 4px; color: #a94442; background-color: #f2dede;">Scout is experiencing occasional issues with access from off campus. Before searching off campus, log in via the yellow bar on the top of the screen to help keep this issue from occurring. (No action is needed on campus.)</div>'; 
+		var newHTML  = '<div class="alert" style="margin-top: 10px;  margin-bottom: 10px; max-width: 510px; padding: 15px; border-radius: 4px; color: #8a6d3b; background-color: #fcf83e;">The links with the label "Check for Full Text" are currently running very slowly.  All other full text links are working normally.</div>'; 
 		jQuery('#findFieldOuter').prepend(newHTML);
 	});
 }
@@ -566,9 +567,10 @@ function addFeedbackLink(){
 }
   
  function updateLanguageMetadata(){
-   jQuery(document).ready(function(){
    
-       /*Update language facet information*/
+   jQuery(document).ready(function(){
+     
+       
       language = document.querySelectorAll('label[for="_cluster_Language%24undetermined"] a')[0]; 
       if (typeof(language) != 'undefined'){
         language.innerHTML = 'english or other'; 
@@ -580,6 +582,7 @@ function addFeedbackLink(){
             language.innerHTML = 'english or other';
         }
       }
+      
       
       [].forEach.call(document.querySelectorAll('#citationFields strong'), function(item){
         if (item.innerHTML == 'Undetermined'){
@@ -606,6 +609,15 @@ function addFeedbackLink(){
       }
 
       //Edit descriptions that appear in search results
+      
+      /*
+      $('.display-info').each(function(item){
+         displayHTML = $(this).html();
+         displayHTML.replace("Language: Undetermined", "Language: English or other");
+         $(this).html(displayHTML);
+      });*/
+      
+      /*
       recordDescriptions = document.querySelectorAll('.display-info');
       Array.prototype.forEach.call(recordDescriptions, function(el){
 
@@ -613,7 +625,7 @@ function addFeedbackLink(){
 
       el.innerHTML = el.innerHTML.replace("Language: <strong>Undetermined</strong>", "Language: <strong>English or other</strong>");
 
-      });  
+      });  */
    });
  }
 
