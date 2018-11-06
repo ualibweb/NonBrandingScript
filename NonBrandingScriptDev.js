@@ -1,6 +1,4 @@
-
-console.log("dev 033312017 4");
-console.log("non-branding script dev!");
+console.log("dev branding!");
 
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -385,9 +383,13 @@ var oneSearchLoading = function() {
 	
     //whenLoaded('jQuery', addNewSearchLink);
     whenLoaded('jQuery', addFeedbackLink);
-    whenLoaded('jQuery', updateLanguageMetadata);
-    whenLoaded('jQuery', addAlertMessage);
-   
+    whenLoaded('jQuery', updateLanguageMetadata); 
+    //whenLoaded('jQuery', addAlertMessage);
+		whenLoaded('jQuery', restylePubFinder);
+		
+		function restylePubFinder(){
+			$('#findFieldOuter h2.searching span').attr('style', 'color: rgb(83,83,83) !important');
+		};
     
 
     function moveAPCarousel(){
@@ -456,6 +458,7 @@ jQuery( document ).ajaxComplete(function( event, xhr, settings ) {
     disciplinesHide(1);
   }
   
+  console.log("beginning of new HTML");
   var searchOptionSegment = '/CheckoutDialog/CheckBookAvailability';
   
   searchResult = URL.search(searchOptionSegment);
@@ -482,9 +485,10 @@ function downloadMessageEbook(){
 
 function addAlertMessage(){
 	jQuery( document ).ready(function(){
-		
-		var newHTML  = '<div class="alert" style="margin-top: 10px;  margin-bottom: 10px; max-width: 510px; padding: 15px; border-radius: 4px; color: #8a6d3b; background-color: #fcf83e;">The links with the label "Check for Full Text" are currently running very slowly.  All other full text links are working normally.</div>'; 
-		jQuery('#findFieldOuter').prepend(newHTML);
+		//Warning colors #8a6d3b for text, #fcf83e for background
+    //Danger colors #a94442 for text, #f2dede for background
+		var newHTML  = '<div class="alert" style="margin-top: 10px;  margin-bottom: 10px; max-width: 600px; padding: 15px; border-radius: 4px; color: #8a6d3b; background-color: #fcf83e;">The password reset form for Scout accounts is experiencing occasional issues.  This issue is being addressed as a high priority.'; 
+		jQuery('#findFieldOuter fieldset').prepend(newHTML);
 	});
 }
 
@@ -567,10 +571,9 @@ function addFeedbackLink(){
 }
   
  function updateLanguageMetadata(){
-   
    jQuery(document).ready(function(){
-     
-       
+   
+       /*Update language facet information*/
       language = document.querySelectorAll('label[for="_cluster_Language%24undetermined"] a')[0]; 
       if (typeof(language) != 'undefined'){
         language.innerHTML = 'english or other'; 
@@ -582,7 +585,6 @@ function addFeedbackLink(){
             language.innerHTML = 'english or other';
         }
       }
-      
       
       [].forEach.call(document.querySelectorAll('#citationFields strong'), function(item){
         if (item.innerHTML == 'Undetermined'){
@@ -609,14 +611,6 @@ function addFeedbackLink(){
       }
 
       //Edit descriptions that appear in search results
-      
-      /*
-      $('.display-info').each(function(item){
-         displayHTML = $(this).html();
-         displayHTML.replace("Language: Undetermined", "Language: English or other");
-         $(this).html(displayHTML);
-      });*/
-      
       /*
       recordDescriptions = document.querySelectorAll('.display-info');
       Array.prototype.forEach.call(recordDescriptions, function(el){
@@ -647,18 +641,20 @@ $(window).load(function(){
 
       //Select database text in specific result to check if it's an EBSCO eBook.  This selector is relative to the display-info markup.  
       $(this).find('.record-icon ~ span').each(function(){
-          console.log("BOOK JACKET!");               
-         if (this.innerHTML == ', Database: eBook Collection (EBSCOhost)'){
-            removePDFToCloud = true;
-            return false; //equivalent to break -- which jQuery doesn't support
-          }
+          console.log("BOOK JACKET!");
+					var isEBSCOEBook = this.innerHTML.search('eBook Collection');					
+					if (isEBSCOEBook > 0){
+							removePDFToCloud = true;
+							console.log("EBSCO eBook Collection!");
+							return false; //equivalent to break -- which jQuery doesn't support
+					}
       });
 
       if (removePDFToCloud == true){
 
           //Hide "Save PDF to Cloud"
            $(this).find('.externalLinks a[href^="http://www.lib.ua.edu/externalWidgets/eds/savePDFtocloud"]').each(function(){
-                  //console.log('found!')
+                  console.log('hidden!')
                   $(this).css('display', 'none');
            });
            
