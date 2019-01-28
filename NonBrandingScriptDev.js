@@ -189,7 +189,7 @@ var oneSearchLoading = function() {
 
       (function checkService() {
         console.log("Waiting on " + service);
-        if (window[service] || (service == 'checkoutModal' && (apVideo = document.querySelector('#CheckoutDownloadModal')))) { 
+        if (window[service] || (service == 'checkoutModal' && (apVideo = document.querySelector('#CheckoutDownloadModal'))) || (service == 'rtac' && (apVideo = document.querySelector('.rtac-table td')))) { 
             clearTimeout(timeout);
             callback();
         } else {
@@ -386,6 +386,7 @@ var oneSearchLoading = function() {
     whenLoaded('jQuery', updateLanguageMetadata); 
     //whenLoaded('jQuery', addAlertMessage);
 		whenLoaded('jQuery', restylePubFinder);
+		whenLoaded('rtac', appendMetadataToDocDelivery);
 		
 		function restylePubFinder(){
 			$('#findFieldOuter h2.searching span').attr('style', 'color: rgb(83,83,83) !important');
@@ -669,6 +670,116 @@ $(window).load(function(){
 });
 
 
+}
+
+function appendMetadataToDocDelivery(){
+		console.log("Append metadata to doc delivery link");
+		re = '/eds\/results'
+		found = location.pathname.match(re);
+		if (found){
+			console.log("results page");
+			
+			$('.rtac-table td').each(function(){
+				//console.log("selector is doing something!");
+				var tableCellHTML = $(this).html();
+				//This regex hasn't been thoroughly tested yet
+				var LOCregex = /^\s*([A-Z]{1,3})\s*(\d+(?:\s*\.\s*\d+)?)?\s*(?:\.?\s*([A-Z]+)\s*(\d+)?)?(?:\.?\s*([A-Z]+)\s*(\d+)?)/
+				var callNumberMatches = tableCellHTML.match(LOCregex)
+				if ( callNumberMatches && callNumberMatches.length){
+					var callNumber = $.trim(callNumberMatches[0]);
+					console.log('callNumber is');
+					console.log(callNumber);
+				}
+				else {
+					console.log("callNumber not found");
+				}
+				
+				//works, but SELECTOR for find needs fixed to target the doc delivery custom link
+				$(this).closest('.result-list-record').find('span.custom-link a').each(function(){
+					console.log("closest!");
+					queryStringAddition = "&callNumber=" + callNumber;
+					var href = $(this).attr('href');
+					$(this).attr('test', href + queryStringAddition);  
+				});
+				
+			});
+		}
+	
+		console.log("append metadata called!");
+	  re = /\/detail\/detail/;
+    found = location.pathname.match(re);
+		if (found){
+			
+			console.log("Found");
+			var iter = 0;
+			
+			
+			//Attach call number to custom lnik
+			var callNumber = $.trim($('table.rtac-table td').eq(1).html());;
+			console.log("callNumber is");
+			console.log(callNumber);
+			
+			queryStringAddition = "&callNumber=" + callNumber;
+			var href = $(this).attr('href');
+			$(this).attr('href', href + queryStringAddition);  
+			
+			//Attach publication information to custom link
+			$('#citationFields').children().each(function(){
+				
+				if ($(this).prop('nodeName') == 'DT'){
+
+					var metadataLabel = $(this).html();
+					//console.log("metadata label");
+					//console.log(metadataLabel);
+					
+					if (metadataLabel.search('Publication Information') != -1){						
+						
+						console.log("iter")
+						console.log(iter)
+
+						
+						var publicationValue = $('#citationFields').children().eq(iter+1).html();
+						
+								
+						console.log("Publication Value");										
+						console.log(publicationValue);
+						
+						//Split into publication values
+						var publicationArray = publicationValue.split(':'); 
+		
+						console.log("Publication Array");										
+						console.log(publicationArray);
+
+						var publisherValue = $.trim(publicationArray[0]) + ' : ' + $.trim(publicationArray[1]);
+						var placeOfPublicationValue = $.trim(publicationArray[2]);
+						
+						var queryStringAddition; 
+						queryStringAddition = '&loanpublisher=' + publisherValue;
+						queryStringAddition += '&loanplace=' + placeOfPublicationValue;
+						
+						console.log("QUERY STRING ADDITION");
+						console.log(queryStringAddition);
+						
+						queryStringAddition = encodeURIComponent(queryStringAddition);
+						
+						$('#Column1Content .custom-link a').each(function(){
+							console.log("custom links!");
+							//console.log($(this).html());
+							if ($(this).html().search('Document delivery') !== -1){
+								console.log("Document delivery found!");
+								var href = $(this).attr('href');
+								$(this).attr('href', href + queryStringAddition);  	
+								
+								console.log(href + queryStringAddition);
+							}
+							
+						});					
+				}
+			}
+		iter++;
+		});
+			
+	}
 }
 
 
